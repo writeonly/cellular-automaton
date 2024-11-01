@@ -8,7 +8,7 @@ interface CellProps {
 
 const Cell: React.FC<CellProps> = ({ state, isAnt }) => {
   return (
-    <div className={`cell ${state === 1 ? 'active' : ''} ${isAnt ? 'ant' : ''}`}></div>
+    <div className={`cell ${state === 0 ? '' : 'active'} ${isAnt ? 'ant' : ''}`}></div>
   );
 };
 
