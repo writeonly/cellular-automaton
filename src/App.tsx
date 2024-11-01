@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-
-interface Direction {
-  x: number;
-  y: number;
-}
+import Grid from './components/Grid';
+import { AntState, CellState, Direction } from './types';
 
 const DIRECTIONS: Direction[] = [
   { x: 0, y: -1 },
@@ -15,17 +12,9 @@ const DIRECTIONS: Direction[] = [
 
 const GRID_SIZE = 101;
 
-type CellState = 0 | 1;
-
-interface AntState {
-  x: number;
-  y: number;
-  direction: number;
-}
-
 const App: React.FC = () => {
   const [grid, setGrid] = useState<CellState[][]>(
-    Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(0))
+    Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0))
   );
 
   const [ant, setAnt] = useState<AntState>({
@@ -41,7 +30,6 @@ const App: React.FC = () => {
       const currentCell = newGrid[y][x];
 
       newGrid[y][x] = currentCell === 0 ? 1 : 0;
-
       const newDirection = (direction + (currentCell === 0 ? 1 : -1) + 4) % 4;
 
       const newX = (x + DIRECTIONS[newDirection].x + GRID_SIZE) % GRID_SIZE;
@@ -60,18 +48,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <h1>Langton's ant</h1>
-      <div className="grid">
-        {grid.map((row, y) => (
-          <div key={y} className="row">
-            {row.map((cell, x) => (
-              <div
-                key={`${x}-${y}`}
-                className={`cell ${cell === 1 ? 'active' : ''} ${ant.x === x && ant.y === y ? 'ant' : ''}`}
-              ></div>
-            ))}
-          </div>
-        ))}
-      </div>
+      <Grid grid={grid} ant={ant} />
     </div>
   );
 };
