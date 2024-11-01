@@ -12,7 +12,7 @@ const DIRECTIONS: Direction[] = [
 
 const GRID_SIZE = 101;
 
-const flags = [true, false];
+const flags: boolean[] = [true, false];
 
 const MAX_CELL_STATES = flags.length;
 
@@ -52,7 +52,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>Langton's ant with Multiple States</h1>
+      <h1>Langton's Ant with Multiple States</h1>
       <Grid grid={grid} ant={ant} />
     </div>
   );
