@@ -36,3 +36,32 @@
     transform: rotate(360deg);
   }
 }
+
+.App {
+  text-align: center;
+  padding: 20px;
+}
+
+.grid {
+  display: inline-block;
+  margin: 20px auto;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 5px;
+  height: 5px;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.cell.active {
+  background-color: black;
+}
+
+.cell.ant {
+  background-color: red;
+}
