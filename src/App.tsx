@@ -12,6 +12,10 @@ const DIRECTIONS: Direction[] = [
 
 const GRID_SIZE = 101;
 
+const flags = [true, false];
+
+const MAX_CELL_STATES = flags.length;
+
 const App: React.FC = () => {
   const [grid, setGrid] = useState<CellState[][]>(
     Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0))
@@ -29,8 +33,9 @@ const App: React.FC = () => {
       const { x, y, direction } = ant;
       const currentCell = newGrid[y][x];
 
-      newGrid[y][x] = currentCell === 0 ? 1 : 0;
-      const newDirection = (direction + (currentCell === 0 ? 1 : -1) + 4) % 4;
+      newGrid[y][x] = (currentCell + 1) % MAX_CELL_STATES;
+
+      const newDirection = (direction + (flags[currentCell % 2] ? 1 : -1) + 4) % 4;
 
       const newX = (x + DIRECTIONS[newDirection].x + GRID_SIZE) % GRID_SIZE;
       const newY = (y + DIRECTIONS[newDirection].y + GRID_SIZE) % GRID_SIZE;
@@ -47,7 +52,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>Langton's ant</h1>
+      <h1>Langton's ant with Multiple States</h1>
       <Grid grid={grid} ant={ant} />
     </div>
   );

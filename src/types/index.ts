@@ -3,7 +3,7 @@ export interface Direction {
   y: number;
 }
 
-export type CellState = 0 | 1;
+export type CellState = number;
 
 export interface AntState {
   x: number;
