@@ -3,18 +3,17 @@ import { AntState } from '../types/AntState';
 import { Direction, DIRECTIONS, nextDirection } from '../types/Direction';
 import { wrapAround } from '../types/utils';
 
-const GRID_SIZE = 101;
-
 interface AntProps {
   turnRules: string;
   cellStates: number;
+  gridSize: number;
   grid: number[][];
   setGrid: React.Dispatch<React.SetStateAction<number[][]>>;
   ant: AntState;
   setAnt: React.Dispatch<React.SetStateAction<AntState>>;
 }
 
-const Ant: React.FC<AntProps> = ({ grid, setGrid, ant, setAnt, cellStates, turnRules }) => {
+const Ant: React.FC<AntProps> = ({ turnRules, cellStates, gridSize, grid, setGrid, ant, setAnt }) => {
   const moveAnt = () => {
     setGrid((oldGrid) => {
       const newGrid = oldGrid.map(row => [...row]);
@@ -26,8 +25,8 @@ const Ant: React.FC<AntProps> = ({ grid, setGrid, ant, setAnt, cellStates, turnR
       const turnDirection = turnRules[currentCell % turnRules.length];
       const newDirection = nextDirection(turnDirection, direction)
 
-      const newX = wrapAround(GRID_SIZE, x + DIRECTIONS[newDirection].x);
-      const newY = wrapAround(GRID_SIZE, y + DIRECTIONS[newDirection].y);
+      const newX = wrapAround(gridSize, x + DIRECTIONS[newDirection].x);
+      const newY = wrapAround(gridSize, y + DIRECTIONS[newDirection].y);
 
       setAnt({ x: newX, y: newY, direction: newDirection });
       return newGrid;

@@ -5,7 +5,7 @@ import Ant from './components/Ant';
 import AntConfig from './components/AntConfig';
 import { AntState } from './types/AntState';
 
-const GRID_SIZE = 101;
+const GRID_SIZE = 151;
 
 const App: React.FC = () => {
   const [grid, setGrid] = useState<number[][]>(
@@ -29,14 +29,17 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>Langton's Ant with Multiple States</h1>
       <div style={{ display: 'flex' }}>
-        <AntConfig onStart={handleStart} />
+        <div>
+          <h1>Langton's Ant with Multiple States</h1>
+          <AntConfig onStart={handleStart} />
+        </div>
         <Grid cellStates={turnRules.length} grid={grid} ant={ant} />
       </div>
       <Ant
         turnRules={turnRules}
         cellStates={turnRules.length}
+        gridSize={GRID_SIZE}
         grid={grid}
         setGrid={setGrid}
         ant={ant}

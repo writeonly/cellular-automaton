@@ -52,8 +52,8 @@
 }
 
 .cell {
-  width: 5px;
-  height: 5px;
+  width: 3px;
+  height: 3px;
   border: 1px solid #ddd;
   background-color: white;
 }
