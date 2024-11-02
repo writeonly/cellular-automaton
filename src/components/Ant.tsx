@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AntState } from '../types/AntState';
 import { Direction, DIRECTIONS, nextDirection } from '../types/Direction';
 import { wrapAround } from '../types/utils';
@@ -14,31 +14,43 @@ interface AntProps {
 }
 
 const Ant: React.FC<AntProps> = ({ turnRules, cellStates, gridSize, grid, setGrid, ant, setAnt }) => {
-  const moveAnt = () => {
-    setGrid((oldGrid) => {
-      const newGrid = oldGrid.map(row => [...row]);
-      const { x, y, direction } = ant;
-      const currentCell = newGrid[y][x];
+  const [stepCount, setStepCount] = useState(0);
 
-      newGrid[y][x] = (currentCell + 1) % cellStates;
+  const moveAnt = React.useCallback(() => {
+    const { x, y, direction } = ant;
+    const currentCell = grid[y][x];
 
-      const turnDirection = turnRules[currentCell % turnRules.length];
-      const newDirection = nextDirection(turnDirection, direction)
+    const newGrid = grid.slice();
+    newGrid[y][x] = (currentCell + 1) % cellStates;
 
-      const newX = wrapAround(gridSize, x + DIRECTIONS[newDirection].x);
-      const newY = wrapAround(gridSize, y + DIRECTIONS[newDirection].y);
+    const turnDirection = turnRules[currentCell % turnRules.length];
+    const newDirection = nextDirection(turnDirection, direction);
 
-      setAnt({ x: newX, y: newY, direction: newDirection });
-      return newGrid;
-    });
-  };
+    const newX = wrapAround(gridSize, x + DIRECTIONS[newDirection].x);
+    const newY = wrapAround(gridSize, y + DIRECTIONS[newDirection].y);
+
+    setGrid(newGrid);
+    setAnt({ x: newX, y: newY, direction: newDirection });
+    setStepCount(prevCount => prevCount + 1);  // Increment the step counter
+  }, [ant, grid, turnRules, cellStates, gridSize, setGrid, setAnt]);
 
   useEffect(() => {
-    const interval = setInterval(moveAnt, 1);
-    return () => clearInterval(interval);
-  }, [ant]);
+    let animationId: number;
 
-  return null;
+    const animate = () => {
+      moveAnt();
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, [moveAnt]);
+
+  return (
+    <div className="ant-info">
+      <p>Steps: {stepCount}</p>
+    </div>
+  );
 };
 
 export default Ant;
