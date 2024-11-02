@@ -1,12 +1,7 @@
 import React, { useEffect } from 'react';
-import { AntState, CellState, Direction } from '../types';
-
-const DIRECTIONS: Direction[] = [
-  { x: 0, y: -1 },
-  { x: 1, y: 0 },
-  { x: 0, y: 1 },
-  { x: -1, y: 0 }
-];
+import { AntState, CellState } from '../types';
+import { Direction, DIRECTIONS, nextDirection } from '../types/Direction';
+import { wrapAround } from '../types/utils';
 
 const GRID_SIZE = 101;
 
@@ -29,12 +24,10 @@ const Ant: React.FC<AntProps> = ({ grid, setGrid, ant, setAnt, cellStates, turnR
       newGrid[y][x] = (currentCell + 1) % cellStates;
 
       const turnDirection = turnRules[currentCell % turnRules.length];
-      const newDirection = turnDirection === 'R'
-        ? (direction + 1) % 4
-        : (direction + 3) % 4;
+      const newDirection = nextDirection(turnDirection, direction)
 
-      const newX = (x + DIRECTIONS[newDirection].x + GRID_SIZE) % GRID_SIZE;
-      const newY = (y + DIRECTIONS[newDirection].y + GRID_SIZE) % GRID_SIZE;
+      const newX = wrapAround(GRID_SIZE, x + DIRECTIONS[newDirection].x);
+      const newY = wrapAround(GRID_SIZE, y + DIRECTIONS[newDirection].y);
 
       setAnt({ x: newX, y: newY, direction: newDirection });
       return newGrid;
