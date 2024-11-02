@@ -8,11 +8,11 @@ const generateEmptyGrid = (size: number): CellState[][] =>
 
 const generateRandomGrid = (size: number): CellState[][] =>
   Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => (Math.random() > 0.5 ? 1 : 0))
+    Array.from({ length: size }, () => (Math.random() < 0.5 ? 1 : 0))
   );
 
 const GameOfLifeApp: React.FC = () => {
-  const [gridSize, setGridSize] = useState(20);
+  const [gridSize, setGridSize] = useState(100);
   const [grid, setGrid] = useState<CellState[][]>(generateEmptyGrid(gridSize));
   const [isRunning, setIsRunning] = useState(false);
 
@@ -34,13 +34,28 @@ const GameOfLifeApp: React.FC = () => {
     }, 0);
   };
 
+  const createDigitSet = (numStr: string): Set<number> => {
+    const digitSet = new Set<number>();
+    for (const char of numStr) {
+      const digit = Number(char);
+      if (!isNaN(digit)) {
+        digitSet.add(digit);
+      }
+    }
+    return digitSet;
+  };
+
+  const rules = "23/3";
+//   const rules = "456789/56789";
+  const [toLive, toBorn] = rules.split("/").map(it => new Set(Array.from(it, Number)));
+
   const nextGeneration = useCallback(() => {
     setGrid((oldGrid) => {
       return oldGrid.map((row, y) =>
         row.map((cell, x) => {
           const neighbors = countNeighbors(x, y);
-          if (cell === 1 && (neighbors < 2 || neighbors > 3)) return 0;
-          if (cell === 0 && neighbors === 3) return 1;
+          if (cell === 1 && !toLive.has(neighbors)) return 0;
+          if (cell === 0 && toBorn.has(neighbors)) return 1;
           return cell;
         })
       );
