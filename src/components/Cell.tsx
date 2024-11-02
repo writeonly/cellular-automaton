@@ -1,19 +1,18 @@
 import React from 'react';
-import { CellState } from '../types';
 
 interface CellProps {
-  state: CellState;
-  isAnt: boolean;
   cellStates: number;
+  state: number;
+  isAnt: boolean;
 }
 
-const Cell: React.FC<CellProps> = ({ state, isAnt, cellStates }) => {
-  const getShadeOfGray = (state: number, cellStates: number) => {
+const Cell: React.FC<CellProps> = ({ cellStates, state, isAnt }) => {
+  const getShadeOfGray = (cellStates: number, state: number) => {
     const intensity = 255 - Math.floor((state / (cellStates - 1) * 255));
     return `rgb(${intensity}, ${intensity}, ${intensity})`;
   };
 
- const backgroundColor = !isAnt ? getShadeOfGray(state, cellStates) : undefined;
+ const backgroundColor = !isAnt ? getShadeOfGray(cellStates, state) : undefined;
 
   return (
     <div

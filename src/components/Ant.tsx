@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
-import { AntState, CellState } from '../types';
+import { AntState } from '../types/AntState';
 import { Direction, DIRECTIONS, nextDirection } from '../types/Direction';
 import { wrapAround } from '../types/utils';
 
 const GRID_SIZE = 101;
 
 interface AntProps {
-  grid: CellState[][];
-  setGrid: React.Dispatch<React.SetStateAction<CellState[][]>>;
+  turnRules: string;
+  cellStates: number;
+  grid: number[][];
+  setGrid: React.Dispatch<React.SetStateAction<number[][]>>;
   ant: AntState;
   setAnt: React.Dispatch<React.SetStateAction<AntState>>;
-  cellStates: number;
-  turnRules: string;
 }
 
 const Ant: React.FC<AntProps> = ({ grid, setGrid, ant, setAnt, cellStates, turnRules }) => {
