@@ -32,7 +32,7 @@ const App: React.FC = () => {
       <h1>Langton's Ant with Multiple States</h1>
       <div style={{ display: 'flex' }}>
         <AntConfig onStart={handleStart} />
-        <Grid grid={grid} ant={ant} />
+        <Grid grid={grid} ant={ant} cellStates={turnRules.length}/>
       </div>
       <Ant grid={grid} setGrid={setGrid} ant={ant} setAnt={setAnt} cellStates={turnRules.length} turnRules={turnRules} />
     </div>
