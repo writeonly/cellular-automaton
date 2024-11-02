@@ -11,7 +11,7 @@ const Grid: React.FC<GridProps> = ({ grid, toggleCellState }) => (
   <div
     style={{
       display: 'grid',
-      gridTemplateColumns: `repeat(${grid[0].length}, 20px)`,
+      gridTemplateColumns: `repeat(${grid[0].length}, 10px)`,
       justifyContent: 'center',
     }}
   >

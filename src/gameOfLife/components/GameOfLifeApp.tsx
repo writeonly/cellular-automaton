@@ -3,14 +3,23 @@ import '../../App.css';
 import Grid from './Grid';
 import { CellState } from '../types/CellState';
 
-const GRID_SIZE = 20;
+const generateEmptyGrid = (size: number): CellState[][] =>
+  Array.from({ length: size }, () => Array(size).fill(0));
 
-const generateEmptyGrid = (): CellState[][] =>
-  Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
+const generateRandomGrid = (size: number): CellState[][] =>
+  Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => (Math.random() > 0.5 ? 1 : 0))
+  );
 
 const GameOfLifeApp: React.FC = () => {
-  const [grid, setGrid] = useState<CellState[][]>(generateEmptyGrid);
+  const [gridSize, setGridSize] = useState(20);
+  const [grid, setGrid] = useState<CellState[][]>(generateEmptyGrid(gridSize));
   const [isRunning, setIsRunning] = useState(false);
+
+  const updateGridSize = (size: number) => {
+    setGridSize(size);
+    setGrid(generateEmptyGrid(size));
+  };
 
   const countNeighbors = (x: number, y: number): number => {
     const directions = [
@@ -52,15 +61,30 @@ const GameOfLifeApp: React.FC = () => {
     });
   };
 
-  const resetGrid = () => setGrid(generateEmptyGrid);
+  const resetGrid = () => setGrid(generateEmptyGrid(gridSize));
+
+  const generateRandomGridHandler = () => setGrid(generateRandomGrid(gridSize));
 
   return (
     <div className="App">
       <h1>Game of Life</h1>
-      <button onClick={() => setIsRunning(!isRunning)}>
-        {isRunning ? 'Pause' : 'Start'}
-      </button>
-      <button onClick={resetGrid}>Reset</button>
+      <div>
+        <button onClick={() => setIsRunning(!isRunning)}>
+          {isRunning ? 'Pause' : 'Start'}
+        </button>
+        <button onClick={resetGrid}>Reset</button>
+        <button onClick={generateRandomGridHandler}>Generate Random Grid</button>
+        <label>
+          Grid Size:
+          <input
+            type="number"
+            value={gridSize}
+            onChange={(e) => updateGridSize(Number(e.target.value))}
+            min="10"
+            max="100"
+          />
+        </label>
+      </div>
       <Grid grid={grid} toggleCellState={toggleCellState} />
     </div>
   );

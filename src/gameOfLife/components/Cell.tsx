@@ -11,8 +11,8 @@ const Cell: React.FC<CellProps> = ({ state, toggleState }) => (
     className={`cell ${state ? 'alive' : 'dead'}`}
     onClick={toggleState}
     style={{
-      width: '20px',
-      height: '20px',
+      width: '10px',
+      height: '10px',
       backgroundColor: state ? 'black' : 'white',
       border: '1px solid #ddd',
     }}
