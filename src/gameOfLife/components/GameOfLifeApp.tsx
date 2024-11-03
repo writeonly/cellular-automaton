@@ -34,17 +34,6 @@ const GameOfLifeApp: React.FC = () => {
     }, 0);
   };
 
-  const createDigitSet = (numStr: string): Set<number> => {
-    const digitSet = new Set<number>();
-    for (const char of numStr) {
-      const digit = Number(char);
-      if (!isNaN(digit)) {
-        digitSet.add(digit);
-      }
-    }
-    return digitSet;
-  };
-
   const rules = "23/3";
 //   const rules = "456789/56789";
   const [toLive, toBorn] = rules.split("/").map(it => new Set(Array.from(it, Number)));
