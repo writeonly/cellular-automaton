@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-
 import { AzimuthalPoint } from '../types/AzimuthalPoint';
 import { Point } from '../types/Point';
 
@@ -60,12 +59,10 @@ const ImageProcessor: React.FC = () => {
       image.src = src;
 
       image.onload = () => {
-
         canvas.width = image.width;
         canvas.height = image.height;
 
         if (sourceContext) {
-          sourceContext.clearRect(0, 0, canvas.width, canvas.height);
           sourceContext.drawImage(image, 0, 0, canvas.width, canvas.height);
           const targetCanvas = targetCanvasRef.current;
           if (targetCanvas) {
@@ -73,26 +70,31 @@ const ImageProcessor: React.FC = () => {
             targetCanvas.height = SIZE;
             const targetContext = targetCanvas.getContext('2d');
             if (targetContext) {
-              targetContext.clearRect(0, 0, canvas.width, canvas.height);
+              const targetImageData = targetContext.createImageData(SIZE, SIZE);
+
               for (let i = -HALF_SIZE; i < HALF_SIZE; i++) {
                 for (let j = -HALF_SIZE; j < HALF_SIZE; j++) {
-                  const p = lambertAzimuthalToGeographic({ x: i, y: j}, { lat: 0, lon: 0 }, SIZE * 2)
+                  const p = lambertAzimuthalToGeographic({ x: i, y: j}, { lat: 0, lon: 0 }, SIZE);
+
                   if (!isNaN(p.lat) && !isNaN(p.lon)) {
-                    const targetX = HALF_SIZE + i;
-                    const targetY = HALF_SIZE + j;
-                    const x = Math.round((p.lat + 90) / 180 * image.width);
-                    const y = Math.round((p.lon + 180) / 360 * image.height);
-                    const imageData = sourceContext.getImageData(x, y, 1, 1);
-                    const targetImageData = targetContext.getImageData(targetX, targetY, 1, 1);
-                    targetImageData.data[0] = imageData.data[0];
-                    targetImageData.data[1] = imageData.data[1];
-                    targetImageData.data[2] = imageData.data[2];
-                    targetImageData.data[3] = imageData.data[3];
-                    console.log(`${p.lat} ${p.lon}, ${x} ${y}, ${targetX} ${targetY}`);
-                    targetContext.putImageData(targetImageData, targetX, targetY);
+                    const x = Math.round((p.lon + 180) / 360 * image.width);
+                    const y = Math.round((p.lat + 90) / 180 * image.height);
+
+                    if (0 <= x && x < image.width && 0 <= y && y < image.height) {
+                      const sourcePixel = sourceContext.getImageData(x, y, 1, 1).data;
+                      const targetX = i + HALF_SIZE;
+                      const targetY = j + HALF_SIZE;
+                      const index = (targetY * SIZE + targetX) * 4;
+
+                      targetImageData.data[index] = sourcePixel[0];
+                      targetImageData.data[index + 1] = sourcePixel[1];
+                      targetImageData.data[index + 2] = sourcePixel[2];
+                      targetImageData.data[index + 3] = sourcePixel[3];
+                    }
                   }
                 }
               }
+              targetContext.putImageData(targetImageData, 0, 0);
             }
           }
         }
@@ -100,24 +102,11 @@ const ImageProcessor: React.FC = () => {
     }
   };
 
-  const applyEffects = (sourceContext: CanvasRenderingContext2D, width: number, height: number) => {
-    const imageData = sourceContext.getImageData(0, 0, width, height);
-    const data = imageData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-      data[i] = 255 - data[i];
-      data[i + 1] = 255 - data[i + 1];
-      data[i + 2] = 255 - data[i + 2];
-    }
-
-    sourceContext.putImageData(imageData, 0, 0);
-  };
-
   return (
     <div>
-     <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '10px' }} />
-     {imageSrc && <img src={imageSrc} alt="Uploaded" style={{ display: 'none' }} />}
-      <canvas ref={sourceCanvasRef}></canvas>
+      <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '10px' }} />
+      {imageSrc && <img src={imageSrc} alt="Uploaded" style={{ display: 'none' }} />}
+      <canvas ref={sourceCanvasRef} style={{ display: 'none' }}></canvas>
       <canvas ref={targetCanvasRef}></canvas>
     </div>
   );
